@@ -1,7 +1,7 @@
 module Billing where
 
 import Data.Map (Map)
-import Data.Set as Set
+import qualified Data.Set as Set
 
 type Customer = String
 type Product = String
