@@ -17,7 +17,7 @@ type PriceList = Map Product Double
 -- COURSEWORK FUNCTIONS
 -- a list (without repetitions) of all the products that have been ordered.
 products :: [Order] -> [Product]
-products order = removeDuplicates (Prelude.map retrieveProductFromOrder order)
+products order = removeDuplicates $ Prelude.map retrieveProductFromOrder order
 
 -- a list of products that have been ordered but were not in the price list,
 -- each with a list of the customers who ordered them (without repetitions).
