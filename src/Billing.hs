@@ -1,6 +1,7 @@
 module Billing where
 
 import Data.Map (Map)
+import Data.Set as Set
 
 type Customer = String
 type Product = String
@@ -12,9 +13,11 @@ data Order = Order Customer Product Int
 -- Prices for some products
 type PriceList = Map Product Double
 
+
+-- COURSEWORK FUNCTIONS
 -- a list (without repetitions) of all the products that have been ordered.
 products :: [Order] -> [Product]
-products orders = undefined
+products order = removeDuplicates (Prelude.map retrieveProductFromOrder order)
 
 -- a list of products that have been ordered but were not in the price list,
 -- each with a list of the customers who ordered them (without repetitions).
@@ -31,3 +34,11 @@ bill orders prices = undefined
 -- if they order 5, they pay for 3.
 bill_discount :: [Order] -> PriceList -> [(Customer, Double)]
 bill_discount orders prices = undefined
+
+
+-- EXTRA FUNCTIONS
+removeDuplicates :: Ord a => [a] -> [a]
+removeDuplicates xs = Set.toList (Set.fromList xs)
+
+retrieveProductFromOrder :: Order -> Product
+retrieveProductFromOrder (Order _ p _) = p
