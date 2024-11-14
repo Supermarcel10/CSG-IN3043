@@ -1,6 +1,7 @@
 module Billing where
 
 import Data.Map (Map)
+import qualified Data.Map as Map
 import qualified Data.Set as Set
 
 type Customer = String
@@ -22,7 +23,7 @@ products order = removeDuplicates $ Prelude.map retrieveProductFromOrder order
 -- a list of products that have been ordered but were not in the price list,
 -- each with a list of the customers who ordered them (without repetitions).
 unavailable :: [Order] -> PriceList -> [(Product, [Customer])]
-unavailable orders prices = undefined
+unavailable orders prices = Map.toList $ Map.filterWithKey (\p _ -> Map.notMember p prices) $ groupCustomersByPurchasedProduct orders
 
 -- a list of customers who ordered products in the price list,
 -- together with the total value of the products they ordered.
@@ -42,3 +43,6 @@ removeDuplicates xs = Set.toList (Set.fromList xs)
 
 retrieveProductFromOrder :: Order -> Product
 retrieveProductFromOrder (Order _ p _) = p
+
+groupCustomersByPurchasedProduct :: [Order] -> Map Product [Customer]
+groupCustomersByPurchasedProduct orders = Map.fromListWith (++) [(p, [c]) | Order c p _ <- orders]
