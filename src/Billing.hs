@@ -38,8 +38,12 @@ bill_discount orders prices = undefined
 
 
 -- EXTRA FUNCTIONS
-removeDuplicates :: Ord a => [a] -> [a]
-removeDuplicates xs = Set.toList (Set.fromList xs)
+-- Start Source: https://www.reddit.com/r/haskell/comments/bjeon4/comment/em8wvit/
+-- Setting to set and back would break order of [Char], and after some searching this seems to be the easiest and cleanest approach I found
+removeDuplicates :: Eq a => [a] -> [a]
+removeDuplicates [] = []
+removeDuplicates (a:as) = a:removeDuplicates (filter (/=a) as)
+-- End Source
 
 retrieveProductFromOrder :: Order -> Product
 retrieveProductFromOrder (Order _ p _) = p
