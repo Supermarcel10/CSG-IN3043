@@ -45,5 +45,8 @@ removeDuplicates [] = []
 removeDuplicates (a:as) = a:removeDuplicates (filter (/=a) as)
 -- End Source
 
+removeDuplicatesInMapVal :: (Eq b) => Map a [b] -> Map a [b]
+removeDuplicatesInMapVal = Map.map removeDuplicates
+
 groupCustomersByPurchasedProduct :: [Order] -> Map Product [Customer]
-groupCustomersByPurchasedProduct orders = Map.fromListWith (++) [(p, [c]) | Order c p _ <- orders]
+groupCustomersByPurchasedProduct orders = removeDuplicatesInMapVal $ Map.fromListWith (++) [(p, [c]) | Order c p _ <- orders]
