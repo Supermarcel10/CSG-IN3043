@@ -18,7 +18,7 @@ type PriceList = Map Product Double
 -- COURSEWORK FUNCTIONS
 -- a list (without repetitions) of all the products that have been ordered.
 products :: [Order] -> [Product]
-products order = removeDuplicates $ Prelude.map retrieveProductFromOrder order
+products orders = removeDuplicates [p | Order _ p _ <- orders]
 
 -- a list of products that have been ordered but were not in the price list,
 -- each with a list of the customers who ordered them (without repetitions).
@@ -44,9 +44,6 @@ removeDuplicates :: Eq a => [a] -> [a]
 removeDuplicates [] = []
 removeDuplicates (a:as) = a:removeDuplicates (filter (/=a) as)
 -- End Source
-
-retrieveProductFromOrder :: Order -> Product
-retrieveProductFromOrder (Order _ p _) = p
 
 groupCustomersByPurchasedProduct :: [Order] -> Map Product [Customer]
 groupCustomersByPurchasedProduct orders = Map.fromListWith (++) [(p, [c]) | Order c p _ <- orders]
