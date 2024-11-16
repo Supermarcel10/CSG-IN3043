@@ -2,7 +2,7 @@ module Billing where
 
 import Data.Map (Map)
 import qualified Data.Map as Map
-import qualified Data.Set as Set
+import Data.Set()
 
 type Customer = String
 type Product = String
@@ -58,10 +58,10 @@ billOrdersUsingGivenBillingMethod :: (Map Product Int -> PriceList -> Double) ->
 billOrdersUsingGivenBillingMethod billingMethod orders prices = [(c, v) | (c, p) <- Map.toList $ groupProductsByCustomer orders, v <- [billingMethod p prices]]
 
 sumOfAllProducts :: Map Product Int -> PriceList -> Double
-sumOfAllProducts products prices = sum [fromIntegral q * v | (p, q) <- Map.toList products, Just v <- [Map.lookup p prices]]
+sumOfAllProducts productsWithQuantities prices = sum [fromIntegral q * v | (p, q) <- Map.toList productsWithQuantities, Just v <- [Map.lookup p prices]]
 
 buyOneGetOneFree :: Integral a => a -> a
 buyOneGetOneFree n = (n + 1) `div` 2
 
 sumOfAllProductsWithBuyOneGetOneFree :: Map Product Int -> PriceList -> Double
-sumOfAllProductsWithBuyOneGetOneFree products prices = sum [fromIntegral (buyOneGetOneFree q) * v | (p, q) <- Map.toList products, Just v <- [Map.lookup p prices]]
+sumOfAllProductsWithBuyOneGetOneFree productsWithQuantities prices = sum [fromIntegral (buyOneGetOneFree q) * v | (p, q) <- Map.toList productsWithQuantities, Just v <- [Map.lookup p prices]]
