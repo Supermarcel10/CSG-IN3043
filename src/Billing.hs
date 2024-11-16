@@ -34,7 +34,7 @@ bill = billOrdersUsingGivenBillingMethod sumOfAllProducts
 -- i.e. if a customer orders 4 of a given product, they pay for 2;
 -- if they order 5, they pay for 3.
 bill_discount :: [Order] -> PriceList -> [(Customer, Double)]
-bill_discount orders prices = undefined
+bill_discount = billOrdersUsingGivenBillingMethod sumOfAllProductsWithBuyOneGetOneFree
 
 
 -- EXTRA FUNCTIONS
@@ -59,3 +59,9 @@ billOrdersUsingGivenBillingMethod billingMethod orders prices = [(c, v) | (c, p)
 
 sumOfAllProducts :: Map Product Int -> PriceList -> Double
 sumOfAllProducts products prices = sum [fromIntegral q * v | (p, q) <- Map.toList products, Just v <- [Map.lookup p prices]]
+
+buyOneGetOneFree :: Integral a => a -> a
+buyOneGetOneFree n = (n + 1) `div` 2
+
+sumOfAllProductsWithBuyOneGetOneFree :: Map Product Int -> PriceList -> Double
+sumOfAllProductsWithBuyOneGetOneFree products prices = sum [fromIntegral (buyOneGetOneFree q) * v | (p, q) <- Map.toList products, Just v <- [Map.lookup p prices]]
