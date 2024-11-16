@@ -9,7 +9,7 @@ type Product = String
 
 -- An order of some positive quantity of a product by a customer
 data Order = Order Customer Product Int
-    deriving (Show)
+  deriving (Show)
 
 -- Prices for some products
 type PriceList = Map Product Double
@@ -28,7 +28,7 @@ unavailable orders prices = Map.toList $ Map.filterWithKey (\p _ -> Map.notMembe
 -- a list of customers who ordered products in the price list,
 -- together with the total value of the products they ordered.
 bill :: [Order] -> PriceList -> [(Customer, Double)]
-bill orders prices = undefined
+bill orders prices = [(c, v) | (c, p) <- Map.toList $ groupProductsByCustomer orders, v <- [sumOfAllProducts p prices]]
 
 -- like bill, but applying a "buy one, get one free" discounting policy,
 -- i.e. if a customer orders 4 of a given product, they pay for 2;
@@ -50,3 +50,9 @@ removeDuplicatesInMapVal = Map.map removeDuplicates
 
 groupCustomersByPurchasedProduct :: [Order] -> Map Product [Customer]
 groupCustomersByPurchasedProduct orders = removeDuplicatesInMapVal $ Map.fromListWith (++) [(p, [c]) | Order c p _ <- orders]
+
+groupProductsByCustomer :: [Order] -> Map Customer (Map Product Int)
+groupProductsByCustomer orders = Map.fromListWith (Map.unionWith (+)) [(c, Map.singleton p q) | Order c p q <- orders]
+
+sumOfAllProducts :: Map Product Int -> PriceList -> Double
+sumOfAllProducts products prices = sum [fromIntegral q * v | (p, q) <- Map.toList products, Just v <- [Map.lookup p prices]]
