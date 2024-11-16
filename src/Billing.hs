@@ -28,7 +28,7 @@ unavailable orders prices = Map.toList $ Map.filterWithKey (\p _ -> Map.notMembe
 -- a list of customers who ordered products in the price list,
 -- together with the total value of the products they ordered.
 bill :: [Order] -> PriceList -> [(Customer, Double)]
-bill orders prices = [(c, v) | (c, p) <- Map.toList $ groupProductsByCustomer orders, v <- [sumOfAllProducts p prices]]
+bill = billOrdersUsingGivenBillingMethod sumOfAllProducts
 
 -- like bill, but applying a "buy one, get one free" discounting policy,
 -- i.e. if a customer orders 4 of a given product, they pay for 2;
@@ -53,6 +53,9 @@ groupCustomersByPurchasedProduct orders = removeDuplicatesInMapVal $ Map.fromLis
 
 groupProductsByCustomer :: [Order] -> Map Customer (Map Product Int)
 groupProductsByCustomer orders = Map.fromListWith (Map.unionWith (+)) [(c, Map.singleton p q) | Order c p q <- orders]
+
+billOrdersUsingGivenBillingMethod :: (Map Product Int -> PriceList -> Double) -> [Order] -> PriceList -> [(Customer, Double)]
+billOrdersUsingGivenBillingMethod billingMethod orders prices = [(c, v) | (c, p) <- Map.toList $ groupProductsByCustomer orders, v <- [billingMethod p prices]]
 
 sumOfAllProducts :: Map Product Int -> PriceList -> Double
 sumOfAllProducts products prices = sum [fromIntegral q * v | (p, q) <- Map.toList products, Just v <- [Map.lookup p prices]]
