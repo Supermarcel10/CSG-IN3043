@@ -1,0 +1,24 @@
+cabal-version:      3.4
+name:               CSG-IN3043
+version:            0.1.0.0
+-- synopsis:
+-- description:
+
+license:            NONE
+-- copyright:
+author:             Supermarcel10
+maintainer:         marcelbarlik@gmail.com
+
+build-type:         Simple
+extra-doc-files:    docs/cwk.pdf
+
+common warnings
+    ghc-options: -Wall
+
+library
+    import:           warnings
+    main-is:          Billing.hs
+    build-depends:    base ^>=4.18.2.1,
+											containers
+    hs-source-dirs:   src
+    default-language: GHC2021
