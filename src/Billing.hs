@@ -28,13 +28,13 @@ unavailable orders prices = Map.toList $ Map.filterWithKey (\p _ -> Map.notMembe
 -- a list of customers who ordered products in the price list,
 -- together with the total value of the products they ordered.
 bill :: [Order] -> PriceList -> [(Customer, Double)]
-bill = billOrdersUsingGivenBillingMethod sumOfAllProducts
+bill = billOrdersUsingDiscountMethod noDiscountPricing
 
 -- like bill, but applying a "buy one, get one free" discounting policy,
 -- i.e. if a customer orders 4 of a given product, they pay for 2;
 -- if they order 5, they pay for 3.
 bill_discount :: [Order] -> PriceList -> [(Customer, Double)]
-bill_discount = billOrdersUsingGivenBillingMethod sumOfAllProductsWithBuyOneGetOneFree
+bill_discount = billOrdersUsingDiscountMethod buyOneGetOneFree
 
 
 -- EXTRA FUNCTIONS
@@ -54,14 +54,14 @@ groupCustomersByPurchasedProduct orders = removeDuplicatesInMapVal $ Map.fromLis
 groupProductsByCustomer :: [Order] -> Map Customer (Map Product Int)
 groupProductsByCustomer orders = Map.fromListWith (Map.unionWith (+)) [(c, Map.singleton p q) | Order c p q <- orders]
 
-billOrdersUsingGivenBillingMethod :: (Map Product Int -> PriceList -> Double) -> [Order] -> PriceList -> [(Customer, Double)]
-billOrdersUsingGivenBillingMethod billingMethod orders prices = [(c, v) | (c, p) <- Map.toList $ groupProductsByCustomer orders, v <- [billingMethod p prices]]
+billOrdersUsingDiscountMethod :: (Int -> Int) -> [Order] -> PriceList -> [(Customer, Double)]
+billOrdersUsingDiscountMethod discountMethod orders prices = [(c, v) | (c, p) <- Map.toList $ groupProductsByCustomer orders, v <- [sumOfAllProducts discountMethod p prices]]
 
-sumOfAllProducts :: Map Product Int -> PriceList -> Double
-sumOfAllProducts productsWithQuantities prices = sum [fromIntegral q * v | (p, q) <- Map.toList productsWithQuantities, Just v <- [Map.lookup p prices]]
+sumOfAllProducts :: (Int -> Int) -> Map Product Int -> PriceList -> Double
+sumOfAllProducts discountMethod productsWithQuantities prices = sum [fromIntegral (discountMethod q) * v | (p, q) <- Map.toList productsWithQuantities, Just v <- [Map.lookup p prices]]
 
-buyOneGetOneFree :: Integral a => a -> a
+noDiscountPricing :: Int -> Int
+noDiscountPricing n = n
+
+buyOneGetOneFree :: Int -> Int
 buyOneGetOneFree n = (n + 1) `div` 2
-
-sumOfAllProductsWithBuyOneGetOneFree :: Map Product Int -> PriceList -> Double
-sumOfAllProductsWithBuyOneGetOneFree productsWithQuantities prices = sum [fromIntegral (buyOneGetOneFree q) * v | (p, q) <- Map.toList productsWithQuantities, Just v <- [Map.lookup p prices]]
