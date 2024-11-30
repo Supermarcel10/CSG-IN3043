@@ -18,7 +18,7 @@ common warnings
 library
     import:           warnings
     exposed-modules:  Billing
-    build-depends:    base ^>=4.18.2.1,
-											containers
+    build-depends:    base >=4.18.2.1,
+                      containers
     hs-source-dirs:   src
     default-language: GHC2021
